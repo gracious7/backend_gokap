@@ -1,0 +1,19 @@
+{
+   "type": "postgres",
+   "host": "database",
+   "port": 5432,
+   "username": "prince",
+   "password": "prince@123",
+   "database": "gokap",
+   "synchronize": true,
+   "logging": false,
+   "entities": [
+      "dist/entities/**/*.js"
+   ],
+   "migrations": [
+      "dist/migration/**/*.js"
+   ],
+   "subscribers": [
+      "dist/subscriber/**/*.js"
+   ]
+}
