@@ -6,7 +6,12 @@ export const createTask = async (req: any, res: Response) => {
   const taskRepository = getRepository(Task);
   const { title, description, status, priority, dueDate } = req.body;
 
-  const task = taskRepository.create({ title, description, status, priority, dueDate, user: req.user });
+  const task = await taskRepository.create({ title, description, status, priority, dueDate, user: req.user });
+
+  // const oldTtitle = await taskRepository.find({title});
+  // if(oldTtitle.title === title){
+  //   return res.status(409).send("A task of same title already exists please make another task");
+  // }
 
   await taskRepository.save(task);
   res.status(201).send(task);
@@ -15,6 +20,9 @@ export const createTask = async (req: any, res: Response) => {
 export const getTasks = async (req: any, res: Response) => {
   const taskRepository = getRepository(Task);
   const tasks = await taskRepository.find({ where: { user: req.user } });
+  if(!tasks){
+    return res.status(204).send("Account deleted successfully!");
+  }
   res.send(tasks);
 };
 
@@ -46,3 +54,15 @@ export const deleteTask = async (req: any, res: Response) => {
   await taskRepository.remove(task);
   res.status(204).send();
 };
+export const sortPriority = async (req: any, res: Response) => {
+  const taskRepository = getRepository(Task);
+  const tasks = await taskRepository.find({ where: { user: req.user }, order: { priority: 'ASC' } });
+  res.send(tasks);
+};
+export const sortStatus = async (req: any, res: Response) => {
+  const taskRepository = getRepository(Task);
+  const tasks = await taskRepository.find({ where: { user: req.user }, order: { status: 'ASC' } });
+  res.send(tasks);
+};
+
+

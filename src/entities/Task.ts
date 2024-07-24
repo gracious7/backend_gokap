@@ -13,13 +13,13 @@ export class Task {
   description!: string;
 
   @Column()
-  status!: string;
+  status!: string; //"Complete" has higher priority than  "Incomplete"
 
   @Column()
-  priority!: string;
+  priority!: string; // "1" : High, "2": medium, "3": low
 
   @Column({ type: "timestamp", default: () => "CURRENT_TIMESTAMP" })
-  dueDate!: Date;
+  dueDate!: Date; //to be rectify better way
 
   @Column({ type: "timestamp", default: () => "CURRENT_TIMESTAMP" })
   createdAt!: Date;
