@@ -2,10 +2,10 @@ import { Router } from "express";
 import { createTask, getTasks, updateTask, deleteTask } from "../controllers/taskController";
 import { authMiddleware } from "../middlewares/authMiddleware";
 
-const router = Router();
+const router: any = Router();
 
 router.post("/", authMiddleware, createTask);
-router.get("/", authMiddleware, getTasks);
+router.get("/gettask", authMiddleware, getTasks);
 router.put("/:taskId", authMiddleware, updateTask);
 router.delete("/:taskId", authMiddleware, deleteTask);
 

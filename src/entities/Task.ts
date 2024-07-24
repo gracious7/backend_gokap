@@ -18,7 +18,7 @@ export class Task {
   @Column()
   priority!: string;
 
-  @Column()
+  @Column({ type: "timestamp", default: () => "CURRENT_TIMESTAMP" })
   dueDate!: Date;
 
   @Column({ type: "timestamp", default: () => "CURRENT_TIMESTAMP" })

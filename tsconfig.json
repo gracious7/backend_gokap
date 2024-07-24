@@ -1,20 +1,3 @@
-// {
-//   "compilerOptions": {
-//     "strict": true,
-//     "strictPropertyInitialization": false,  // Add this line
-//     "experimentalDecorators": true,
-//     "emitDecoratorMetadata": true,
-//     "target": "ES6",
-//     "module": "commonjs",
-//     "esModuleInterop": true,
-//     "skipLibCheck": true,
-//     "outDir": "./dist",
-//     "rootDir": "./src",
-//   },
-//   "include": ["src/**/*.ts"],
-//   "exclude": ["node_modules"]
-// }
-
 {
   "compilerOptions": {
     "target": "ES6",
@@ -25,8 +8,9 @@
     "esModuleInterop": true,
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "typeRoots": ["./src/types", "index.type.d.ts", "./node_modules/@types", "./types"]
   },
-  "include": ["src/**/*.ts", "src/index.js"],
+  "include": ["src/**/*.ts", "src/types/**/*.d.ts"],
   "exclude": ["node_modules"]
 }

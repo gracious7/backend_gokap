@@ -3,12 +3,13 @@ import jwt from "jsonwebtoken";
 import { getRepository } from "typeorm";
 import { User } from "../entities/User";
 
-export const authMiddleware = async (req: Request, res: Response, next: NextFunction) => {
-  const token = req.headers.authorization?.split(" ")[1];
+export const authMiddleware = async (req: any, res: Response, next: NextFunction) => {
+  const token = req.cookies.token;
   if (!token) return res.status(401).send("Access denied");
 
   try {
     const decoded: any = jwt.verify(token, process.env.JWT_SECRET!);
+    console.log(process.env.JWT_SECRET);
     const userRepository = getRepository(User);
     const user = await userRepository.findOne(decoded.userId);
 

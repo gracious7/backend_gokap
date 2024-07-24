@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import { getRepository } from "typeorm";
 import { Task } from "../entities/Task";
 
-export const createTask = async (req: Request, res: Response) => {
+export const createTask = async (req: any, res: Response) => {
   const taskRepository = getRepository(Task);
   const { title, description, status, priority, dueDate } = req.body;
 
@@ -12,13 +12,13 @@ export const createTask = async (req: Request, res: Response) => {
   res.status(201).send(task);
 };
 
-export const getTasks = async (req: Request, res: Response) => {
+export const getTasks = async (req: any, res: Response) => {
   const taskRepository = getRepository(Task);
   const tasks = await taskRepository.find({ where: { user: req.user } });
   res.send(tasks);
 };
 
-export const updateTask = async (req: Request, res: Response) => {
+export const updateTask = async (req: any, res: Response) => {
   const taskRepository = getRepository(Task);
   const { taskId } = req.params;
   const { title, description, status, priority, dueDate } = req.body;
@@ -36,7 +36,7 @@ export const updateTask = async (req: Request, res: Response) => {
   res.send(task);
 };
 
-export const deleteTask = async (req: Request, res: Response) => {
+export const deleteTask = async (req: any, res: Response) => {
   const taskRepository = getRepository(Task);
   const { taskId } = req.params;
 

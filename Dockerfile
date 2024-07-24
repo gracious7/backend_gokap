@@ -1,26 +1,21 @@
-# Use the latest Node.js LTS version
 FROM node:latest
 
-# Set the working directory
-WORKDIR /app
+# Create app directory
+WORKDIR /usr/src/app
 
-# Copy package.json and package-lock.json to the working directory
+# Install app dependencies
 COPY package*.json ./
 
-# Install dependencies
 RUN npm install
 
-# Copy the rest of the application code to the working directory
+# Bundle app source
 COPY . .
 
-# Install TypeScript globally
-RUN npm install -g typescript
+# Build TypeScript files
+RUN npx tsc
 
-# Build the TypeScript code
-RUN npm run build
-
-# Expose port 3000
+# Expose the port the app runs on
 EXPOSE 3000
 
-# Start the application
+# Command to run the app
 CMD ["node", "dist/index.js"]

@@ -8,9 +8,9 @@ import "reflect-metadata"
 
 const app = express();
 
-app.use(bodyParser.json());
+// app.use(express.json());
 
-app.use("/api/tasks", taskRoutes);
-app.use("/api/users", userRoutes);
+// app.use("/api/tasks", taskRoutes);
+// app.use("/api/users", userRoutes);
 
 export default app;
