@@ -24,7 +24,7 @@ export const register = asyncHandler(async (req: Request, res: Response) => {
 
   const isSaved = await userRepository.save(user);
   if(!isSaved) throw new ApiError(500, "Unable to save user please try again!");
-  res.status(201).json(new ApiResponse(201, user));
+  res.status(201).json(new ApiResponse(201, user, "Registered Successfully!"));
 });
 
 export const login = asyncHandler(async (req: Request, res: Response) => {
