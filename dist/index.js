@@ -25,6 +25,7 @@ const taskRoutes_1 = __importDefault(require("./routes/taskRoutes"));
 const userRoutes_1 = __importDefault(require("./routes/userRoutes"));
 const dotenv_1 = __importDefault(require("dotenv"));
 const cookie_parser_1 = __importDefault(require("cookie-parser"));
+const errorMiddleware_1 = require("./middlewares/errorMiddleware");
 dotenv_1.default.config();
 const app = (0, express_1.default)();
 app.use((0, cookie_parser_1.default)());
@@ -47,6 +48,7 @@ const port = 3000;
         res.send('Welcome to server!');
     });
     app.use(express_1.default.json());
+    app.use(errorMiddleware_1.errorMiddleware);
     app.use("/api/tasks", taskRoutes_1.default);
     app.use("/api/users", userRoutes_1.default);
     app.listen(port, () => {

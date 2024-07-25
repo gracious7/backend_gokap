@@ -19,15 +19,16 @@ exports.createTask = (0, asyncHandler_1.asyncHandler)((req, res) => __awaiter(vo
     const taskRepository = (0, typeorm_1.getRepository)(Task_1.Task);
     const { title, description, status, priority, dueDate } = req.body;
     const task = yield taskRepository.create({ title, description, status, priority, dueDate, user: req.user });
-    const ttask = undefined;
-    if (!ttask) {
+    if (!task) {
         throw new ApiError_1.ApiError(500, "Getting error in tasks");
     }
     // const oldTtitle = await taskRepository.find({title});
     // if(oldTtitle.title === title){
     //   return res.status(409).send("A task of same title already exists please make another task");
     // }
-    yield taskRepository.save(task);
+    const isSaved = yield taskRepository.save(task);
+    if (!isSaved)
+        throw new ApiError_1.ApiError(500, "Something went wrong while saving task!");
     res.status(201).json(new ApiResponse_1.ApiResponse(200, task, "Successfully created the task!"));
 }));
 exports.getTasks = (0, asyncHandler_1.asyncHandler)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -64,7 +65,7 @@ exports.deleteTask = (0, asyncHandler_1.asyncHandler)((req, res) => __awaiter(vo
     const isRemoved = yield taskRepository.remove(task);
     if (!isRemoved)
         throw new ApiError_1.ApiError(500, "Something went wrong while removing the task!");
-    res.status(204).json(new ApiResponse_1.ApiResponse(204, `Task ${task.id} has been deleted successfully!`));
+    res.status(202).json(new ApiResponse_1.ApiResponse(202, `Task ${taskId} has been deleted successfully!`));
 }));
 exports.sortPriority = (0, asyncHandler_1.asyncHandler)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const taskRepository = (0, typeorm_1.getRepository)(Task_1.Task);

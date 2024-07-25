@@ -24,6 +24,7 @@ import taskRoutes from "./routes/taskRoutes";
 import userRoutes from "./routes/userRoutes";
 import dotenv from 'dotenv';
 import cookieParser from 'cookie-parser';
+import { errorMiddleware } from './middlewares/errorMiddleware';
 
 dotenv.config(); 
 const app = express();
@@ -50,6 +51,7 @@ createConnection({
   });
 
   app.use(express.json());
+  app.use(errorMiddleware);
 
   app.use("/api/tasks", taskRoutes);
   app.use("/api/users", userRoutes);

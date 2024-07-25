@@ -15,16 +15,18 @@ export const register = asyncHandler(async (req: Request, res: Response) => {
 
   const notValid = userRepository.find({username});
   if(!(!notValid)){
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const user = userRepository.create({ username, password: hashedPassword });
+    if(!user) throw new ApiError(500, "Something went wront while registration!");
+  
+    const isSaved = await userRepository.save(user);
+    if(!isSaved) throw new ApiError(500, "Unable to save user please try again!");
+    res.status(201).json(new ApiResponse(201, user, "Registered Successfully!"));
+  }
+  else{
     throw new ApiError(409, "User already exists");
   }
 
-  const hashedPassword = await bcrypt.hash(password, 10);
-  const user = userRepository.create({ username, password: hashedPassword });
-  if(!user) throw new ApiError(500, "Something went wront while registration!");
-
-  const isSaved = await userRepository.save(user);
-  if(!isSaved) throw new ApiError(500, "Unable to save user please try again!");
-  res.status(201).json(new ApiResponse(201, user, "Registered Successfully!"));
 });
 
 export const login = asyncHandler(async (req: Request, res: Response) => {

@@ -10,8 +10,7 @@ export const createTask = asyncHandler(async (req: any, res: Response) => {
   const { title, description, status, priority, dueDate } = req.body;
 
   const task = await taskRepository.create({ title, description, status, priority, dueDate, user: req.user });
-  const ttask = undefined;
-  if(!ttask){
+  if(!task){
     throw new ApiError(500, "Getting error in tasks")
   }
   
@@ -20,7 +19,8 @@ export const createTask = asyncHandler(async (req: any, res: Response) => {
   //   return res.status(409).send("A task of same title already exists please make another task");
   // }
 
-  await taskRepository.save(task);
+  const isSaved = await taskRepository.save(task);
+  if(!isSaved) throw new ApiError(500, "Something went wrong while saving task!")
   res.status(201).json(new ApiResponse(200, task, "Successfully created the task!"));
 });
 
@@ -62,7 +62,7 @@ export const deleteTask = asyncHandler(async (req: any, res: Response) => {
 
   const isRemoved = await taskRepository.remove(task);
   if(!isRemoved) throw new ApiError(500, "Something went wrong while removing the task!")
-  res.status(204).json(new ApiResponse(204, `Task ${task.id} has been deleted successfully!`));
+  res.status(202).json(new ApiResponse(202, `Task ${taskId} has been deleted successfully!`));
 });
 
 export const sortPriority = asyncHandler( async (req: any, res: Response) => {

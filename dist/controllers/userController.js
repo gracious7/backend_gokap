@@ -25,16 +25,18 @@ exports.register = (0, asyncHandler_1.asyncHandler)((req, res) => __awaiter(void
     const { username, password } = req.body;
     const notValid = userRepository.find({ username });
     if (!(!notValid)) {
+        const hashedPassword = yield bcryptjs_1.default.hash(password, 10);
+        const user = userRepository.create({ username, password: hashedPassword });
+        if (!user)
+            throw new ApiError_1.ApiError(500, "Something went wront while registration!");
+        const isSaved = yield userRepository.save(user);
+        if (!isSaved)
+            throw new ApiError_1.ApiError(500, "Unable to save user please try again!");
+        res.status(201).json(new ApiResponse_1.ApiResponse(201, user, "Registered Successfully!"));
+    }
+    else {
         throw new ApiError_1.ApiError(409, "User already exists");
     }
-    const hashedPassword = yield bcryptjs_1.default.hash(password, 10);
-    const user = userRepository.create({ username, password: hashedPassword });
-    if (!user)
-        throw new ApiError_1.ApiError(500, "Something went wront while registration!");
-    const isSaved = yield userRepository.save(user);
-    if (!isSaved)
-        throw new ApiError_1.ApiError(500, "Unable to save user please try again!");
-    res.status(201).json(new ApiResponse_1.ApiResponse(201, user, "Registered Successfully!"));
 }));
 exports.login = (0, asyncHandler_1.asyncHandler)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const userRepository = (0, typeorm_1.getRepository)(User_1.User);
