@@ -18,7 +18,7 @@ This repository contains the backend implementation for the GoKap project. It is
 
 Before you begin, ensure you have met the following requirements:
 
-- Node.js (v14 or higher)
+- Node.js (v20 or higher)
 - npm (v6 or higher)
 - PostgreSQL
 - Docker (if you want to run the application using Docker)
