@@ -1,38 +1,46 @@
 import { Request, Response } from "express";
 import { getRepository } from "typeorm";
 import { Task } from "../entities/Task";
+import { asyncHandler } from "../utils/asyncHandler";
+import { ApiError } from "../utils/ApiError";
+import { ApiResponse } from "../utils/ApiResponse";
 
-export const createTask = async (req: any, res: Response) => {
+export const createTask = asyncHandler(async (req: any, res: Response) => {
   const taskRepository = getRepository(Task);
   const { title, description, status, priority, dueDate } = req.body;
 
   const task = await taskRepository.create({ title, description, status, priority, dueDate, user: req.user });
-
+  const ttask = undefined;
+  if(!ttask){
+    throw new ApiError(500, "Getting error in tasks")
+  }
+  
   // const oldTtitle = await taskRepository.find({title});
   // if(oldTtitle.title === title){
   //   return res.status(409).send("A task of same title already exists please make another task");
   // }
 
   await taskRepository.save(task);
-  res.status(201).send(task);
-};
+  res.status(201).json(new ApiResponse(200, task, "Successfully created the task!"));
+});
 
-export const getTasks = async (req: any, res: Response) => {
+export const getTasks = asyncHandler(async (req: any, res: Response) => {
   const taskRepository = getRepository(Task);
   const tasks = await taskRepository.find({ where: { user: req.user } });
-  if(!tasks){
-    return res.status(204).send("Account deleted successfully!");
+  if(tasks.length == 0){
+    throw new ApiError(404, "Task is empty please make a task!")
+    
   }
-  res.send(tasks);
-};
+  res.status(200).json(new ApiResponse(200, tasks, "Successfully retrived the task!"));
+});
 
-export const updateTask = async (req: any, res: Response) => {
+export const updateTask = asyncHandler(async (req: any, res: Response) => {
   const taskRepository = getRepository(Task);
   const { taskId } = req.params;
   const { title, description, status, priority, dueDate } = req.body;
 
   let task = await taskRepository.findOne({ where: { id: taskId, user: req.user } });
-  if (!task) return res.status(404).send("Task not found");
+  if (!task) throw new ApiError(404, "Task not found");
 
   task.title = title;
   task.description = description;
@@ -40,29 +48,35 @@ export const updateTask = async (req: any, res: Response) => {
   task.priority = priority;
   task.dueDate = dueDate;
 
-  await taskRepository.save(task);
-  res.send(task);
-};
+  const isSaved = await taskRepository.save(task);
+  if(!isSaved) throw new ApiError(500, "Something went wrong while saving the task!");
+  res.status(200).json(new ApiResponse(200, task, `Task ${task.id} updated successfully!`));
+});
 
-export const deleteTask = async (req: any, res: Response) => {
+export const deleteTask = asyncHandler(async (req: any, res: Response) => {
   const taskRepository = getRepository(Task);
   const { taskId } = req.params;
 
   let task = await taskRepository.findOne({ where: { id: taskId, user: req.user } });
-  if (!task) return res.status(404).send("Task not found");
+  if (!task) throw new ApiError(404, "Task not found") ;
 
-  await taskRepository.remove(task);
-  res.status(204).send();
-};
-export const sortPriority = async (req: any, res: Response) => {
+  const isRemoved = await taskRepository.remove(task);
+  if(!isRemoved) throw new ApiError(500, "Something went wrong while removing the task!")
+  res.status(204).json(new ApiResponse(204, `Task ${task.id} has been deleted successfully!`));
+});
+
+export const sortPriority = asyncHandler( async (req: any, res: Response) => {
   const taskRepository = getRepository(Task);
   const tasks = await taskRepository.find({ where: { user: req.user }, order: { priority: 'ASC' } });
-  res.send(tasks);
-};
-export const sortStatus = async (req: any, res: Response) => {
+  if(!tasks) throw new ApiError(500, "Something went wrong while sorting the tasks on the basis of priority!")
+    res.status(200).json(new ApiResponse(200, tasks, "Priority based sorting done!"));
+});
+export const sortStatus = asyncHandler(async (req: any, res: Response) => {
   const taskRepository = getRepository(Task);
   const tasks = await taskRepository.find({ where: { user: req.user }, order: { status: 'ASC' } });
-  res.send(tasks);
-};
+  if(!tasks) throw new ApiError(500, "Something went wrong while sorting the tasks on the basis of status!")
+  res.status(200).json(new ApiResponse(200, tasks, "Status based sorting done!"));
+
+})
 
 

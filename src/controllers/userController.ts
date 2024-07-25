@@ -3,38 +3,41 @@ import { getRepository } from "typeorm";
 import { User } from "../entities/User";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
-import dotenv from 'dotenv';
+import { asyncHandler } from "../utils/asyncHandler";
+import { ApiError } from "../utils/ApiError";
+import { ApiResponse } from "../utils/ApiResponse";
 
-export const register = async (req: Request, res: Response) => {
+
+export const register = asyncHandler(async (req: Request, res: Response) => {
   const userRepository = getRepository(User);
   
   const { username, password } = req.body;
 
   const notValid = userRepository.find({username});
   if(!(!notValid)){
-    return res.status(409).send("User already exist!");
+    throw new ApiError(409, "User already exists");
   }
 
   const hashedPassword = await bcrypt.hash(password, 10);
   const user = userRepository.create({ username, password: hashedPassword });
+  if(!user) throw new ApiError(500, "Something went wront while registration!");
 
-  await userRepository.save(user);
-  res.status(201).send(user);
-};
+  const isSaved = await userRepository.save(user);
+  if(!isSaved) throw new ApiError(500, "Unable to save user please try again!");
+  res.status(201).json(new ApiResponse(201, user));
+});
 
-export const login = async (req: Request, res: Response) => {
+export const login = asyncHandler(async (req: Request, res: Response) => {
   const userRepository = getRepository(User);
   const { username, password } = req.body;
 
   const user = await userRepository.findOne({ username });
-  if (!user) return res.status(404).send("User not found");
+  if (!user) throw new ApiError(404, "User not found");
 
   const isValid = await bcrypt.compare(password, user.password);
-  if (!isValid) return res.status(401).send("Invalid credentials");
+  if (!isValid) throw new ApiError(401, "Invalid credentials!");
 
   const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET!, { expiresIn: "1h" });
 
-  res.setHeader('Authorization', `Bearer ${token}`);
-  res.cookie('token', token);
-  res.send({ token });
-};
+  res.status(200).setHeader('Authorization', `Bearer ${token}`).cookie('token', token).json(new ApiResponse(200, user, "Login Successfully"));
+});
