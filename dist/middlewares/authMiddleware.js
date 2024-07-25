@@ -16,22 +16,38 @@ exports.authMiddleware = void 0;
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const typeorm_1 = require("typeorm");
 const User_1 = require("../entities/User");
-const authMiddleware = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+const asyncHandler_1 = require("../utils/asyncHandler");
+const ApiError_1 = require("../utils/ApiError");
+/**
+ * Middleware to authorize user based on JWT token.
+ *
+ * This middleware checks for the presence of a JWT token in cookies, verifies it, and retrieves the user associated with the token.
+ * If the token is valid and the user exists, the user is attached to the request object and the request is allowed to proceed.
+ * Otherwise, an error response is sent.
+ *
+ * @param req - The request object, which is expected to contain a JWT token in cookies.
+ * @param res - The response object used to send the response back to the client.
+ * @param next - The next middleware function to call if authorization is successful.
+ *
+ * @returns Calls the next middleware function if authorization is successful.
+ *
+ * @throws {ApiError} If no token is provided, if the token is invalid, or if the user is not found.
+ */
+exports.authMiddleware = (0, asyncHandler_1.asyncHandler)((req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     const token = req.cookies.token;
     if (!token)
-        return res.status(401).send("Access denied");
+        throw new ApiError_1.ApiError(401, "Access denied!");
     try {
         const decoded = jsonwebtoken_1.default.verify(token, process.env.JWT_SECRET);
         console.log(process.env.JWT_SECRET);
         const userRepository = (0, typeorm_1.getRepository)(User_1.User);
         const user = yield userRepository.findOne(decoded.userId);
         if (!user)
-            return res.status(401).send("Access denied");
+            throw new ApiError_1.ApiError(401, "Access denied!");
         req.user = user;
         next();
     }
     catch (err) {
-        res.status(400).send("Invalid token");
+        res.status(400).json(new ApiError_1.ApiError(400, "Invalid token"));
     }
-});
-exports.authMiddleware = authMiddleware;
+}));

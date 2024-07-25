@@ -8,6 +8,16 @@ import { ApiError } from "../utils/ApiError";
 import { ApiResponse } from "../utils/ApiResponse";
 
 
+/**
+ * Registers a new user.
+ *
+ * @param req - The request object containing the user registration details in the body.
+ * @param res - The response object used to send the response back to the client.
+ * 
+ * @returns A JSON response containing the registered user.
+ * 
+ * @throws {ApiError} If something goes wrong during registration or if the user already exists.
+ */
 export const register = asyncHandler(async (req: Request, res: Response) => {
   const userRepository = getRepository(User);
   
@@ -29,6 +39,16 @@ export const register = asyncHandler(async (req: Request, res: Response) => {
 
 });
 
+/**
+ * Authenticates a user and generates a JWT token.
+ *
+ * @param req - The request object containing the user login details (username and password) in the body.
+ * @param res - The response object used to send the response back to the client.
+ * 
+ * @returns A JSON response containing the authenticated user and a JWT token.
+ * 
+ * @throws {ApiError} If the user is not found or if the credentials are invalid.
+ */
 export const login = asyncHandler(async (req: Request, res: Response) => {
   const userRepository = getRepository(User);
   const { username, password } = req.body;

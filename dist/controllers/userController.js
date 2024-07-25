@@ -20,6 +20,16 @@ const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const asyncHandler_1 = require("../utils/asyncHandler");
 const ApiError_1 = require("../utils/ApiError");
 const ApiResponse_1 = require("../utils/ApiResponse");
+/**
+ * Registers a new user.
+ *
+ * @param req - The request object containing the user registration details in the body.
+ * @param res - The response object used to send the response back to the client.
+ *
+ * @returns A JSON response containing the registered user.
+ *
+ * @throws {ApiError} If something goes wrong during registration or if the user already exists.
+ */
 exports.register = (0, asyncHandler_1.asyncHandler)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const userRepository = (0, typeorm_1.getRepository)(User_1.User);
     const { username, password } = req.body;
@@ -38,6 +48,16 @@ exports.register = (0, asyncHandler_1.asyncHandler)((req, res) => __awaiter(void
         throw new ApiError_1.ApiError(409, "User already exists");
     }
 }));
+/**
+ * Authenticates a user and generates a JWT token.
+ *
+ * @param req - The request object containing the user login details (username and password) in the body.
+ * @param res - The response object used to send the response back to the client.
+ *
+ * @returns A JSON response containing the authenticated user and a JWT token.
+ *
+ * @throws {ApiError} If the user is not found or if the credentials are invalid.
+ */
 exports.login = (0, asyncHandler_1.asyncHandler)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const userRepository = (0, typeorm_1.getRepository)(User_1.User);
     const { username, password } = req.body;

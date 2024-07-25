@@ -30,6 +30,22 @@ dotenv_1.default.config();
 const app = (0, express_1.default)();
 app.use((0, cookie_parser_1.default)());
 const port = 3000;
+/**
+ * Establishes a connection to the PostgreSQL database and starts the Express server.
+ *
+ * This script sets up the application by configuring the database connection, initializing the Express server,
+ * and setting up the necessary middleware and routes. It also handles errors globally using the `errorMiddleware`.
+ *
+ * - Connects to the PostgreSQL database using TypeORM.
+ * - Sets up middleware for parsing cookies and JSON request bodies.
+ * - Defines routes for handling tasks and users.
+ * - Attaches the global error handling middleware.
+ * - Starts the server on the specified port.
+ *
+ * @returns {Promise<void>} A promise that resolves when the server has started and the connection to the database is established.
+ *
+ * @throws {Error} If there is an issue with the database connection or server startup.
+ */
 (0, typeorm_1.createConnection)({
     type: 'postgres',
     host: process.env.DB_HOST,
@@ -44,13 +60,14 @@ const port = 3000;
     synchronize: true,
 }).then(connection => {
     console.log('Connected to the database');
+    app.use(express_1.default.json());
     app.get('/', (req, res) => {
         res.send('Welcome to server!');
     });
-    app.use(express_1.default.json());
-    app.use(errorMiddleware_1.errorMiddleware);
     app.use("/api/tasks", taskRoutes_1.default);
     app.use("/api/users", userRoutes_1.default);
+    // Error handling middleware should be the last middleware
+    app.use(errorMiddleware_1.errorMiddleware);
     app.listen(port, () => {
         console.log(`Server is running on http://localhost:${port}`);
     });
