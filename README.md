@@ -155,6 +155,9 @@ Here are some of the main API endpoints available in the application:
 - **GET /api/tasks/sortPriority**: Get tasks sorted by priority.
 - **GET /api/tasks/sortStatus**: Get tasks sorted by status.
 
+##For API testing below is the link of postman collection:
+- https://pandrimarket.postman.co/workspace/New-Team-Workspace~bafcaad5-bfae-45f5-a1b9-1d03d6db5bbe/collection/28421993-c6367c0c-cd5d-4fb0-be5f-b78d5578b9ef?action=share&creator=28421993
+
 ## Contributing
 
 Contributions are always welcome! Please follow these steps to contribute:
